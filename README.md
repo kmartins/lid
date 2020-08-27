@@ -3,7 +3,7 @@
 <p align="center">
 <a href="https://pub.dev/packages/flutter_lid"><img src="https://img.shields.io/pub/v/flutter_lid.svg" alt="Pub"></a>
 <a href="https://github.com/kmartins/lid/actions"><img src="https://github.com/kmartins/lid/workflows/flutter_lid/badge.svg" alt="build"></a>
-<a href="https://codecov.io/gh/kmartins/lid"><img src="https://codecov.io/gh/kmartins/lid/branch/master/graph/badge.svg" alt="codecov"></a>
+<a href="https://codecov.io/gh/kmartins/lid"><img src="https://codecov.io/gh/kmartins/lid/branch/main/graph/badge.svg" alt="codecov"></a>
 <a href="https://github.com/kmartins/lid"><img src="https://img.shields.io/github/stars/kmartins/lid.svg?style=flat&logo=github&colorB=deeppink&label=stars" alt="Star on GitHub"></a>
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-purple.svg" alt="License: MIT"></a>
 
