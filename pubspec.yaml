@@ -1,0 +1,22 @@
+name: flutter_lid
+description: A Flutter library built to expose widgets that integrate with state notifier.
+version: 0.1.0
+author: Kauê Martins
+repository: https://github.com/kmartins/lid
+issue_tracker: https://github.com/kmartins/lid/issues
+homepage: https://github.com/kmartins/lid
+documentation: https://github.com/kmartins/lid
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.17.0 <2.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  state_notifier: ^0.6.0
+  nested: ^0.0.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
