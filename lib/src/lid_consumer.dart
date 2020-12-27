@@ -72,12 +72,12 @@ class LidConsumer<T> extends StatelessWidget {
   /// Takes the previous `state` and the current `state` and is responsible for
   /// returning a [bool] which determines whether or not to call [listener] of
   /// [LidConsumer] with the current `state`.
-  final ListenerCondition<T> listenWhen;
+  final ListenerCondition<T>? listenWhen;
 
   /// Takes the previous `state` and the current `state` and is responsible for
   /// returning a [bool] which determines whether or not to trigger
   /// [builder] with the current `state`.
-  final BuilderCondition<T> buildWhen;
+  final BuilderCondition<T>? buildWhen;
 
   /// The [builder] function which will be invoked on each widget build.
   /// The [builder] takes the `BuildContext` and current `state` and
@@ -90,16 +90,13 @@ class LidConsumer<T> extends StatelessWidget {
 
   /// {@macro lid_consumer}
   const LidConsumer({
-    Key key,
-    @required this.listener,
-    @required this.stateNotifier,
-    @required this.builder,
+    Key? key,
+    required this.listener,
+    required this.stateNotifier,
+    required this.builder,
     this.listenWhen,
     this.buildWhen,
-  })  : assert(listener != null),
-        assert(stateNotifier != null),
-        assert(builder != null),
-        super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

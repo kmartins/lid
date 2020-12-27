@@ -12,25 +12,19 @@ class CounterState extends StateNotifier<int> {
 class MyApp extends StatefulWidget {
   final CounterState counterState;
   const MyApp({
-    Key key,
+    Key? key,
     this.onListenerCalled,
-    this.counterState,
+    required this.counterState,
   }) : super(key: key);
 
-  final LidWidgetListener<int> onListenerCalled;
+  final LidWidgetListener<int>? onListenerCalled;
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  CounterState _counterState;
-
-  @override
-  void initState() {
-    super.initState();
-    _counterState = widget.counterState;
-  }
+  late CounterState _counterState = widget.counterState;
 
   @override
   void dispose() {
@@ -75,52 +69,6 @@ class _MyAppState extends State<MyApp> {
 
 void main() {
   group('LidListener', () {
-    testWidgets(
-        'throws if initialized with null state notifier, listener, and child',
-        (tester) async {
-      try {
-        await tester.pumpWidget(
-          LidListener<int>(
-            stateNotifier: null,
-            listener: null,
-          ),
-        );
-        fail('should throw AssertionError');
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws if initialized with null listener and child',
-        (tester) async {
-      try {
-        await tester.pumpWidget(
-          LidListener<int>(
-            stateNotifier: CounterState(),
-            listener: null,
-          ),
-        );
-        fail('should throw AssertionError');
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws if initialized with null state notifier',
-        (tester) async {
-      try {
-        await tester.pumpWidget(
-          LidListener<int>(
-            stateNotifier: null,
-            listener: (_, __) {},
-          ),
-        );
-        fail('should throw AssertionError');
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
     testWidgets('renders child properly', (tester) async {
       const targetKey = Key('lid_listener_container');
       await tester.pumpWidget(
@@ -219,7 +167,7 @@ void main() {
         'and unsubscribes from old state notifier', (tester) async {
       final counterState = CounterState();
       var listenerCallCount = 0;
-      int latestState;
+      int? latestState;
       final incrementFinder = find.byKey(
         const Key('lid_listener_increment_button'),
       );
@@ -260,7 +208,7 @@ void main() {
         'and stays subscribed to current state notifier', (tester) async {
       final counterState = CounterState();
       var listenerCallCount = 0;
-      int latestState;
+      int? latestState;
       final incrementFinder = find.byKey(
         const Key('lid_listener_increment_button'),
       );
@@ -299,7 +247,7 @@ void main() {
     testWidgets(
         'calls listenWhen on single state change with correct previous '
         'and current states', (tester) async {
-      int latestPreviousState;
+      int? latestPreviousState;
       var conditionCallCount = 0;
       final states = <int>[];
       final counterState = CounterState();
@@ -328,7 +276,7 @@ void main() {
     testWidgets(
         'calls listenWhen with previous listener state and current state notifier state',
         (tester) async {
-      int latestPreviousState;
+      int? latestPreviousState;
       var listenWhenCallCount = 0;
       final states = <int>[];
       final counterState = CounterState();
@@ -364,7 +312,7 @@ void main() {
     testWidgets(
         'calls listenWhen on multiple state change with correct previous '
         'and current states', (tester) async {
-      int latestPreviousState;
+      int? latestPreviousState;
       var listenWhenCallCount = 0;
       final states = <int>[];
       final counterState = CounterState();

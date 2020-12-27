@@ -19,10 +19,10 @@ class DarkThemeState extends StateNotifier<ThemeData> {
 
 class MyThemeApp extends StatefulWidget {
   const MyThemeApp({
-    Key key,
-    @required StateNotifier<ThemeData> themeState,
-    @required Function onBuild,
-  })  : _themeState = themeState,
+    Key? key,
+    required StateNotifier<ThemeData> themeState,
+    required Function onBuild,
+  })   : _themeState = themeState,
         _onBuild = onBuild,
         super(key: key);
 
@@ -34,15 +34,8 @@ class MyThemeApp extends StatefulWidget {
 }
 
 class MyThemeAppState extends State<MyThemeApp> {
-  StateNotifier<ThemeData> themeState;
-  Function onBuild;
-
-  @override
-  void initState() {
-    super.initState();
-    themeState = widget._themeState;
-    onBuild = widget._onBuild;
-  }
+  late StateNotifier<ThemeData> themeState = widget._themeState;
+  late Function onBuild = widget._onBuild;
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +75,7 @@ class CounterState extends StateNotifier<int> {
 }
 
 class MyCounterApp extends StatefulWidget {
-  const MyCounterApp({Key key}) : super(key: key);
+  const MyCounterApp({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => MyCounterAppState();
@@ -132,47 +125,6 @@ class MyCounterAppState extends State<MyCounterApp> {
 
 void main() {
   group('LidBuilder', () {
-    testWidgets('throws if initialized with null stateNotifier and builder',
-        (tester) async {
-      try {
-        await tester.pumpWidget(
-          LidBuilder<ThemeData>(
-            stateNotifier: null,
-            builder: null,
-          ),
-        );
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws if initialized with null stateNotifier',
-        (tester) async {
-      try {
-        await tester.pumpWidget(
-          LidBuilder<ThemeData>(
-            stateNotifier: null,
-            builder: (_, __) => const SizedBox.shrink(),
-          ),
-        );
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws if initialized with null builder', (tester) async {
-      try {
-        await tester.pumpWidget(
-          LidBuilder<ThemeData>(
-            stateNotifier: ThemeState(),
-            builder: null,
-          ),
-        );
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
     testWidgets('debugFillProperties', (tester) async {
       final counterState = CounterState();
       final child = LidBuilder<int>(

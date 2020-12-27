@@ -12,49 +12,6 @@ class CounterState extends StateNotifier<int> {
 
 void main() {
   group('LidConsumer', () {
-    testWidgets('throws AssertionError if builder and state notifier are null',
-        (tester) async {
-      try {
-        await tester.pumpWidget(
-          LidConsumer<int>(
-            stateNotifier: null,
-            builder: null,
-            listener: (_, __) {},
-          ),
-        );
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws AssertionError if builder is null', (tester) async {
-      try {
-        await tester.pumpWidget(
-          LidConsumer<int>(
-            stateNotifier: CounterState(),
-            builder: null,
-            listener: (_, __) {},
-          ),
-        );
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws AssertionError if listener is null', (tester) async {
-      try {
-        await tester.pumpWidget(
-          LidConsumer<int>(
-            stateNotifier: null,
-            builder: (_, __) => const SizedBox(),
-            listener: null,
-          ),
-        );
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
     testWidgets('debugFillProperties', (tester) async {
       final counterState = CounterState();
       final child = LidConsumer<int>(

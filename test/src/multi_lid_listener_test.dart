@@ -11,49 +11,6 @@ class CounterState extends StateNotifier<int> {
 
 void main() {
   group('MultiLidListener', () {
-    testWidgets('throws if initialized with no listeners and no child',
-        (tester) async {
-      try {
-        await tester.pumpWidget(
-          MultiLidListener(
-            listeners: null,
-            child: null,
-          ),
-        );
-        fail('should throw AssertionError');
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws if initialized with no listeners', (tester) async {
-      try {
-        await tester.pumpWidget(
-          MultiLidListener(
-            listeners: null,
-            child: const SizedBox(),
-          ),
-        );
-        fail('should throw AssertionError');
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws if initialized with no child', (tester) async {
-      try {
-        await tester.pumpWidget(
-          MultiLidListener(
-            listeners: const <Null>[],
-            child: null,
-          ),
-        );
-        fail('should throw AssertionError');
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
     testWidgets('calls listeners on state changes', (tester) async {
       final statesA = <int>[];
       const expectedStatesA = [1, 2];

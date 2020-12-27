@@ -61,14 +61,12 @@ typedef ListenerCondition<T> = bool Function(T previous, T current);
 /// {@endtemplate}
 class LidListener<T> extends SingleChildStatefulWidget {
   const LidListener({
-    Key key,
-    @required this.listener,
-    @required this.stateNotifier,
+    Key? key,
+    required this.listener,
+    required this.stateNotifier,
     this.listenWhen,
     this.child,
-  })  : assert(listener != null),
-        assert(stateNotifier != null),
-        super(key: key, child: child);
+  }) : super(key: key, child: child);
 
   /// The [LidWidgetListener] which will be called on every `state` change.
   /// This [listener] should be used for any code which needs to execute
@@ -79,10 +77,10 @@ class LidListener<T> extends SingleChildStatefulWidget {
   final StateNotifier<T> stateNotifier;
 
   /// {@macro lid_listener_listen_when}
-  final ListenerCondition<T> listenWhen;
+  final ListenerCondition<T>? listenWhen;
 
   /// The widget which will be rendered as a descendant of the [LidListener].
-  final Widget child;
+  final Widget? child;
 
   @override
   _LidListenerState<T> createState() => _LidListenerState<T>();
@@ -104,13 +102,13 @@ class LidListener<T> extends SingleChildStatefulWidget {
 }
 
 class _LidListenerState<T> extends SingleChildState<LidListener<T>> {
-  //Controla o estado atual
-  T _state;
-  VoidCallback _removeListener;
+  late T _state;
+  VoidCallback? _removeListener;
 
   @override
   void initState() {
     super.initState();
+    _initState(widget.stateNotifier);
     _listen(widget.stateNotifier);
   }
 
@@ -119,23 +117,30 @@ class _LidListenerState<T> extends SingleChildState<LidListener<T>> {
     super.didUpdateWidget(oldWidget);
     if (widget.stateNotifier != oldWidget.stateNotifier) {
       //Restart state
-      _state = null;
+      _initState(widget.stateNotifier);
       _listen(widget.stateNotifier);
     }
+  }
+
+  void _initState(StateNotifier<T> notifier) {
+    widget.stateNotifier
+        .addListener(
+          (value) => _state = value,
+        )
+        .call();
   }
 
   void _listen(StateNotifier<T> notifier) {
     _removeListener?.call();
     _removeListener = notifier.addListener(
       _listener,
+      fireImmediately: false,
     );
   }
 
   void _listener(T value) {
-    if (_state != null) {
-      if (widget.listenWhen?.call(_state, value) ?? true) {
-        widget.listener(context, value);
-      }
+    if (widget.listenWhen?.call(_state, value) ?? true) {
+      widget.listener(context, value);
     }
     _state = value;
   }
@@ -147,7 +152,7 @@ class _LidListenerState<T> extends SingleChildState<LidListener<T>> {
   }
 
   @override
-  Widget buildWithChild(BuildContext context, Widget child) => child;
+  Widget buildWithChild(BuildContext context, Widget? child) => child!;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
