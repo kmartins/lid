@@ -152,7 +152,8 @@ class _LidListenerState<T> extends SingleChildState<LidListener<T>> {
   }
 
   @override
-  Widget buildWithChild(BuildContext context, Widget? child) => child!;
+  Widget buildWithChild(BuildContext context, Widget? child) =>
+      child ?? const SizedBox.shrink();
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {

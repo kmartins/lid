@@ -363,5 +363,40 @@ void main() {
           .widget<Text>(find.byKey(const Key('myCounterAppTextCondition')));
       expect(conditionalCounterText4.data, '2');
     });
+
+    group('with extension', () {
+      testWidgets(
+          'receives events and sends state updates to widget when '
+          'buildWhen is true', (tester) async {
+        final themeState = ThemeState();
+        var numBuilds = 0;
+        await tester.pumpWidget(
+          themeState.toLidBuilder(
+            buildWhen: (oldState, newState) => newState == ThemeData.light(),
+            builder: (_, theme) {
+              ++numBuilds;
+              return MaterialApp(
+                key: const Key('material_app'),
+                theme: theme,
+                home: const SizedBox.shrink(),
+              );
+            },
+          ),
+        );
+
+        final materialApp = tester.widget<MaterialApp>(
+          find.byKey(const Key('material_app')),
+        );
+
+        expect(numBuilds, 1);
+        themeState.setDarkTheme();
+        await tester.pump();
+        themeState.setLightTheme();
+        await tester.pump();
+
+        expect(materialApp.theme, ThemeData.light());
+        expect(numBuilds, 2);
+      });
+    });
   });
 }

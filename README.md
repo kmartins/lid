@@ -245,6 +245,35 @@ LidConsumer<StateType>(
 )
 ```
 
+## Extensions 
+
+There are 3 extensions for -> LidBuilder, LidListener and LidConsumer.
+
+It's super simple to use:
+
+``` dart
+// Same as LidBuilder
+stateNotifier.toLidBuilder(  
+  buildWhen: (previousState, state) {},
+  builder: (context, state) {},
+);
+
+// Same as LidListener
+stateNotifier.toLidListener(  
+  listenWhen: (previousState, state) {},
+  listener: (context, state) {},
+  child: const SizedBox(),
+);
+
+// Same as LidConsumer
+stateNotifier.toLidConsumer(
+  listenWhen: (previous, current) {},
+  listener: (context, state) {},
+  buildWhen: (previous, current) {},
+  builder: (context, state) {}
+);
+```
+
 ## Maintainers
 
 - [Kauê Martins](https://github.com/kmartins)

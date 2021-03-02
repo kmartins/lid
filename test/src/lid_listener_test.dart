@@ -434,5 +434,31 @@ void main() {
 
       expect(states, expectedStates);
     });
+
+    group('with extension', () {
+      testWidgets(
+          'does not call listener when listenWhen returns false '
+          'on multiple state changes', (tester) async {
+        final states = <int>[];
+        final counterState = CounterState();
+        const expectedStates = <int>[];
+        await tester.pumpWidget(
+          counterState.toLidListener(
+            listenWhen: (_, __) => false,
+            listener: (_, state) => states.add(state),
+            child: const SizedBox.shrink(),
+          ),
+        );
+        counterState.increment();
+        await tester.pump();
+        counterState.increment();
+        await tester.pump();
+        counterState.increment();
+        await tester.pump();
+        counterState.increment();
+        await tester.pump();
+        expect(states, expectedStates);
+      });
+    });
   });
 }
