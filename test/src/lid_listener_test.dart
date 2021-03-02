@@ -1,6 +1,6 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lid/flutter_lid.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:state_notifier/state_notifier.dart';
 
 class CounterState extends StateNotifier<int> {
@@ -43,21 +43,24 @@ class _MyAppState extends State<MyApp> {
           },
           child: Column(
             children: [
-              RaisedButton(
+              ElevatedButton(
                 key: const Key('lid_listener_reset_button'),
                 onPressed: () {
                   setState(() => _counterState = CounterState());
                 },
+                child: const Text('lid_listener_reset_button'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 key: const Key('lid_listener_noop_button'),
                 onPressed: () {
                   setState(() => _counterState = _counterState);
                 },
+                child: const Text('lid_listener_noop_button'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 key: const Key('lid_listener_increment_button'),
                 onPressed: () => _counterState.increment(),
+                child: const Text('lid_listener_increment_button'),
               ),
             ],
           ),

@@ -1,6 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_lid/flutter_lid.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/material.dart';
 import 'package:state_notifier/state_notifier.dart';
 
 class ThemeState extends StateNotifier<ThemeData> {
@@ -48,17 +48,19 @@ class MyThemeAppState extends State<MyThemeApp> {
           theme: theme,
           home: Column(
             children: [
-              RaisedButton(
+              ElevatedButton(
                 key: const Key('raised_button_1'),
                 onPressed: () {
                   setState(() => themeState = DarkThemeState());
                 },
+                child: const Text('raised_button_1'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 key: const Key('raised_button_2'),
                 onPressed: () {
                   setState(() => themeState = themeState);
                 },
+                child: const Text('raised_button_2'),
               ),
             ],
           ),
@@ -112,9 +114,10 @@ class MyCounterAppState extends State<MyCounterApp> {
                 );
               },
             ),
-            RaisedButton(
+            ElevatedButton(
               key: const Key('myCounterAppIncrementButton'),
               onPressed: _counter.increment,
+              child: const Text('myCounterAppIncrementButton'),
             )
           ],
         ),
