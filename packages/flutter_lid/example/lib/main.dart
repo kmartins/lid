@@ -48,14 +48,14 @@ class CounterPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: FloatingActionButton(
-              onPressed: _counter.increment,
+              onPressed: () => _counter.increment(),
               child: const Icon(Icons.add),
             ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: FloatingActionButton(
-              onPressed: _counter.decrement,
+              onPressed: () => _counter.decrement(),
               child: const Icon(Icons.remove),
             ),
           ),

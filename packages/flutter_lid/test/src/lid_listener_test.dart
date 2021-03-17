@@ -27,12 +27,6 @@ class _MyAppState extends State<MyApp> {
   late CounterState _counterState = widget.counterState;
 
   @override
-  void dispose() {
-    _counterState.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
@@ -59,7 +53,7 @@ class _MyAppState extends State<MyApp> {
               ),
               ElevatedButton(
                 key: const Key('lid_listener_increment_button'),
-                onPressed: () => _counterState.increment(),
+                onPressed: _counterState.increment,
                 child: const Text('lid_listener_increment_button'),
               ),
             ],
@@ -107,24 +101,6 @@ void main() {
       counterState.increment();
 
       expect(state.toString(), endsWith('(state: 1)'));
-    });
-
-    testWidgets('calls listener on single state change', (tester) async {
-      final counterState = CounterState();
-      final states = <int>[];
-      const expectedStates = [1];
-      await tester.pumpWidget(
-        LidListener<int>(
-          stateNotifier: counterState,
-          listener: (_, state) {
-            states.add(state);
-          },
-          child: const SizedBox(),
-        ),
-      );
-      counterState.increment();
-      await tester.pump();
-      expect(states, expectedStates);
     });
 
     testWidgets('calls listener on single state change', (tester) async {
@@ -443,7 +419,7 @@ void main() {
         final counterState = CounterState();
         const expectedStates = <int>[];
         await tester.pumpWidget(
-          counterState.toLidListener(
+          counterState.listener(
             listenWhen: (_, __) => false,
             listener: (_, state) => states.add(state),
             child: const SizedBox.shrink(),

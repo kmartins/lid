@@ -103,13 +103,14 @@ class LidListener<T> extends SingleChildStatefulWidget {
 
 class _LidListenerState<T> extends SingleChildState<LidListener<T>> {
   late T _state;
+  T? _previousState;
   VoidCallback? _removeListener;
+  late StateNotifier<T> _stateNotifier = widget.stateNotifier;
 
   @override
   void initState() {
     super.initState();
-    _initState(widget.stateNotifier);
-    _listen(widget.stateNotifier);
+    _listen();
   }
 
   @override
@@ -117,32 +118,25 @@ class _LidListenerState<T> extends SingleChildState<LidListener<T>> {
     super.didUpdateWidget(oldWidget);
     if (widget.stateNotifier != oldWidget.stateNotifier) {
       //Restart state
-      _initState(widget.stateNotifier);
-      _listen(widget.stateNotifier);
+      _previousState = null;
+      _stateNotifier = widget.stateNotifier;
+      _listen();
     }
   }
 
-  void _initState(StateNotifier<T> notifier) {
-    widget.stateNotifier
-        .addListener(
-          (value) => _state = value,
-        )
-        .call();
-  }
-
-  void _listen(StateNotifier<T> notifier) {
+  void _listen() {
     _removeListener?.call();
-    _removeListener = notifier.addListener(
-      _listener,
-      fireImmediately: false,
-    );
+    _removeListener = _stateNotifier.addListener(_listener);
   }
 
   void _listener(T value) {
-    if (widget.listenWhen?.call(_state, value) ?? true) {
-      widget.listener(context, value);
-    }
     _state = value;
+    if (_previousState != null) {
+      if (widget.listenWhen?.call(_previousState ?? _state, value) ?? true) {
+        widget.listener(context, value);
+      }
+    }
+    _previousState = _state;
   }
 
   @override

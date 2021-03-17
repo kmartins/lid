@@ -3,6 +3,13 @@ import 'package:flutter_lid/flutter_lid.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:state_notifier/state_notifier.dart';
 
+class ThemeStateNotifier extends StateNotifier<ThemeData> {
+  ThemeStateNotifier() : super(ThemeData.light());
+
+  void setDarkTheme() => state = ThemeData.dark();
+  void setLightTheme() => state = ThemeData.light();
+}
+
 class ThemeState extends StateNotifier<ThemeData> {
   ThemeState() : super(ThemeData.light());
 
@@ -21,13 +28,13 @@ class MyThemeApp extends StatefulWidget {
   const MyThemeApp({
     Key? key,
     required StateNotifier<ThemeData> themeState,
-    required Function onBuild,
+    required void Function() onBuild,
   })   : _themeState = themeState,
         _onBuild = onBuild,
         super(key: key);
 
   final StateNotifier<ThemeData> _themeState;
-  final Function _onBuild;
+  final void Function() _onBuild;
 
   @override
   State<MyThemeApp> createState() => MyThemeAppState();
@@ -35,7 +42,7 @@ class MyThemeApp extends StatefulWidget {
 
 class MyThemeAppState extends State<MyThemeApp> {
   late StateNotifier<ThemeData> themeState = widget._themeState;
-  late Function onBuild = widget._onBuild;
+  late void Function() onBuild = widget._onBuild;
 
   @override
   Widget build(BuildContext context) {
@@ -150,11 +157,13 @@ void main() {
 
       final state = tester.state(find.byWidget(child));
 
-      expect(state.toString(), endsWith('(state: 0)'));
+      expect(state.toString(),
+          endsWith("(state: 0, stateNotifier: Instance of 'CounterState')"));
 
       counterState.increment();
 
-      expect(state.toString(), endsWith('(state: 1)'));
+      expect(state.toString(),
+          endsWith("(state: 1, stateNotifier: Instance of 'CounterState')"));
     });
 
     testWidgets('passes initial state to widget', (tester) async {
@@ -371,7 +380,7 @@ void main() {
         final themeState = ThemeState();
         var numBuilds = 0;
         await tester.pumpWidget(
-          themeState.toLidBuilder(
+          themeState.builder(
             buildWhen: (oldState, newState) => newState == ThemeData.light(),
             builder: (_, theme) {
               ++numBuilds;

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:state_notifier/state_notifier.dart';
 
-import '../flutter_lid.dart';
+import '../../flutter_lid.dart';
 
-extension LidExtension<T> on StateNotifier<T> {
-  Widget toLidBuilder({
+extension StateNotifierExtension<S> on StateNotifier<S> {
+  Widget builder({
     Key? key,
-    required LidWidgetBuilder<T> builder,
-    BuilderCondition<T>? buildWhen,
+    required LidWidgetBuilder<S> builder,
+    BuilderCondition<S>? buildWhen,
   }) {
-    return LidBuilder<T>(
+    return LidBuilder<S>(
       key: key,
       stateNotifier: this,
       builder: builder,
@@ -17,13 +17,13 @@ extension LidExtension<T> on StateNotifier<T> {
     );
   }
 
-  Widget toLidListener({
+  Widget listener({
     Key? key,
-    required LidWidgetListener<T> listener,
-    ListenerCondition<T>? listenWhen,
+    required LidWidgetListener<S> listener,
+    ListenerCondition<S>? listenWhen,
     Widget? child,
   }) {
-    return LidListener<T>(
+    return LidListener<S>(
       key: key,
       stateNotifier: this,
       listener: listener,
@@ -32,14 +32,14 @@ extension LidExtension<T> on StateNotifier<T> {
     );
   }
 
-  Widget toLidConsumer({
+  Widget consumer({
     Key? key,
-    required LidWidgetBuilder<T> builder,
-    BuilderCondition<T>? buildWhen,
-    required LidWidgetListener<T> listener,
-    ListenerCondition<T>? listenWhen,
+    required LidWidgetBuilder<S> builder,
+    BuilderCondition<S>? buildWhen,
+    required LidWidgetListener<S> listener,
+    ListenerCondition<S>? listenWhen,
   }) {
-    return LidConsumer<T>(
+    return LidConsumer<S>(
       key: key,
       stateNotifier: this,
       builder: builder,

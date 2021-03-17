@@ -9,11 +9,11 @@
 
 A Flutter library built to expose widgets that integrate with `state notifier`. Built to work with the [state_notifier](https://pub.dev/packages/state_notifier) state management packages.
 
-It's very similar to widgets the [bloc](https://pub.dev/packages/flutter_bloc) for `cubit`.
+It's very similar to widgets the [bloc](https://pub.dev/packages/flutter_bloc).
 
 ## Motivation
 
-Already exists a package to integrate with the status notifier, called [flutter_state_notifier](https://pub.dev/packages/flutter_state_notifier), but `lid` covers different cases.
+Already exists a package to integrate with the status notifier, called [flutter_state_notifier](https://pub.dev/packages/flutter_state_notifier), but `flutter_lid` covers different cases.
 
 ## Usage
 

@@ -98,13 +98,14 @@ class LidBuilder<T> extends StatefulWidget {
 
 class _LidBuilderState<T> extends State<LidBuilder<T>> {
   late T _state;
+  T? _previousState;
+  late StateNotifier<T> _stateNotifier = widget.stateNotifier;
   VoidCallback? _removeListener;
 
   @override
   void initState() {
     super.initState();
-    _initState(widget.stateNotifier);
-    _listen(widget.stateNotifier);
+    _listen();
   }
 
   @override
@@ -112,38 +113,28 @@ class _LidBuilderState<T> extends State<LidBuilder<T>> {
     super.didUpdateWidget(oldWidget);
     if (widget.stateNotifier != oldWidget.stateNotifier) {
       //Restart state
-      _initState(widget.stateNotifier);
-      _listen(widget.stateNotifier);
+      _previousState = null;
+      _stateNotifier = widget.stateNotifier;
+      _listen();
     }
   }
 
-  void _initState(StateNotifier<T> notifier) {
-    widget.stateNotifier
-        .addListener(
-          (value) => _state = value,
-        )
-        .call();
-  }
-
-  void _listen(StateNotifier<T> notifier) {
+  void _listen() {
     _removeListener?.call();
-    _removeListener = notifier.addListener(
-      _listener,
-      fireImmediately: false,
-    );
+    _removeListener = _stateNotifier.addListener(_listener);
   }
 
   // Build first time forever, without pass through [buildWhen].
   // First time = _lid == nul
   void _listener(T value) {
-    var builderCondition = true;
-    builderCondition = widget.buildWhen?.call(_state, value) ??
-        _defaultBuilderCondition(_state, value);
+    _state = value;
+    final builderCondition =
+        widget.buildWhen?.call(_previousState ?? _state, value) ??
+            _defaultBuilderCondition(_previousState ?? _state, value);
     if (builderCondition) {
-      setState(() => _state = value);
-    } else {
-      _state = value;
+      setState(() {});
     }
+    _previousState = _state;
   }
 
   @override
@@ -158,7 +149,11 @@ class _LidBuilderState<T> extends State<LidBuilder<T>> {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<T>('state', _state));
+    properties
+      ..add(DiagnosticsProperty<T>('state', _state))
+      ..add(
+        DiagnosticsProperty<StateNotifier<T>>('stateNotifier', _stateNotifier),
+      );
   }
 
   /// Not to rebuild if previous `state` is equal current `state`.

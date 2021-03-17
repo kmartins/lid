@@ -3,14 +3,23 @@ name: flutter_lid
 on:
   push:
     branches:
-      - main
+      - "main"
+    paths:
+      - "packages/flutter_lid/**"
+      - ".github/workflows/flutter_lid.yaml"
   pull_request:
     branches:
-      - main
+      - "main"
+    paths:
+      - "packages/flutter_lid/**"
+      - ".github/workflows/flutter_lid.yaml"
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/flutter_lid
     steps:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@v1.3.0
