@@ -57,12 +57,10 @@ import 'lid_listener.dart';
 class MultiLidListener extends Nested {
   /// {@macro multi_lid_listener}
   MultiLidListener({
-    Key key,
-    @required List<LidListener> listeners,
-    @required Widget child,
-  })  : assert(listeners != null),
-        assert(child != null),
-        super(
+    Key? key,
+    required List<LidListener> listeners,
+    required Widget child,
+  }) : super(
           key: key,
           children: listeners,
           child: child,

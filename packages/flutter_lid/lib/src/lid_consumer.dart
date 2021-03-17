@@ -64,42 +64,39 @@ import 'lid_listener.dart';
 /// )
 /// ```
 /// {@endtemplate}
-class LidConsumer<T> extends StatelessWidget {
+class LidConsumer<S> extends StatelessWidget {
   /// Takes the `BuildContext` along with the [stateNotifier] `state`
   /// and is responsible for executing in response to `state` changes.
-  final LidWidgetListener<T> listener;
+  final LidWidgetListener<S> listener;
 
   /// Takes the previous `state` and the current `state` and is responsible for
   /// returning a [bool] which determines whether or not to call [listener] of
   /// [LidConsumer] with the current `state`.
-  final ListenerCondition<T> listenWhen;
+  final ListenerCondition<S>? listenWhen;
 
   /// Takes the previous `state` and the current `state` and is responsible for
   /// returning a [bool] which determines whether or not to trigger
   /// [builder] with the current `state`.
-  final BuilderCondition<T> buildWhen;
+  final BuilderCondition<S>? buildWhen;
 
   /// The [builder] function which will be invoked on each widget build.
   /// The [builder] takes the `BuildContext` and current `state` and
   /// must return a widget.
   /// This is analogous to the [builder] function in [StreamBuilder].
-  final LidWidgetBuilder<T> builder;
+  final LidWidgetBuilder<S> builder;
 
   /// The [stateNotifier] that the [LidConsumer] will interact with.
-  final StateNotifier<T> stateNotifier;
+  final StateNotifier<S> stateNotifier;
 
   /// {@macro lid_consumer}
   const LidConsumer({
-    Key key,
-    @required this.listener,
-    @required this.stateNotifier,
-    @required this.builder,
+    Key? key,
+    required this.listener,
+    required this.stateNotifier,
+    required this.builder,
     this.listenWhen,
     this.buildWhen,
-  })  : assert(listener != null),
-        assert(stateNotifier != null),
-        assert(builder != null),
-        super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -120,19 +117,19 @@ class LidConsumer<T> extends StatelessWidget {
     super.debugFillProperties(properties);
     properties
       ..add(
-        DiagnosticsProperty<StateNotifier<T>>('stateNotifier', stateNotifier),
+        DiagnosticsProperty<StateNotifier<S>>('stateNotifier', stateNotifier),
       )
       ..add(
-        ObjectFlagProperty<LidWidgetBuilder<T>>.has('builder', builder),
+        ObjectFlagProperty<LidWidgetBuilder<S>>.has('builder', builder),
       )
       ..add(
-        ObjectFlagProperty<BuilderCondition<T>>.has('buildWhen', buildWhen),
+        ObjectFlagProperty<BuilderCondition<S>>.has('buildWhen', buildWhen),
       )
       ..add(
-        ObjectFlagProperty<LidWidgetListener<T>>.has('listener', listener),
+        ObjectFlagProperty<LidWidgetListener<S>>.has('listener', listener),
       )
       ..add(
-        ObjectFlagProperty<ListenerCondition<T>>.has('listenWhen', listenWhen),
+        ObjectFlagProperty<ListenerCondition<S>>.has('listenWhen', listenWhen),
       );
   }
 }

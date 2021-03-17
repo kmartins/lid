@@ -1,7 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_lid/flutter_lid.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/material.dart';
 import 'package:state_notifier/state_notifier.dart';
+
+class ThemeStateNotifier extends StateNotifier<ThemeData> {
+  ThemeStateNotifier() : super(ThemeData.light());
+
+  void setDarkTheme() => state = ThemeData.dark();
+  void setLightTheme() => state = ThemeData.light();
+}
 
 class ThemeState extends StateNotifier<ThemeData> {
   ThemeState() : super(ThemeData.light());
@@ -19,30 +26,23 @@ class DarkThemeState extends StateNotifier<ThemeData> {
 
 class MyThemeApp extends StatefulWidget {
   const MyThemeApp({
-    Key key,
-    @required StateNotifier<ThemeData> themeState,
-    @required Function onBuild,
-  })  : _themeState = themeState,
+    Key? key,
+    required StateNotifier<ThemeData> themeState,
+    required void Function() onBuild,
+  })   : _themeState = themeState,
         _onBuild = onBuild,
         super(key: key);
 
   final StateNotifier<ThemeData> _themeState;
-  final Function _onBuild;
+  final void Function() _onBuild;
 
   @override
   State<MyThemeApp> createState() => MyThemeAppState();
 }
 
 class MyThemeAppState extends State<MyThemeApp> {
-  StateNotifier<ThemeData> themeState;
-  Function onBuild;
-
-  @override
-  void initState() {
-    super.initState();
-    themeState = widget._themeState;
-    onBuild = widget._onBuild;
-  }
+  late StateNotifier<ThemeData> themeState = widget._themeState;
+  late void Function() onBuild = widget._onBuild;
 
   @override
   Widget build(BuildContext context) {
@@ -55,17 +55,19 @@ class MyThemeAppState extends State<MyThemeApp> {
           theme: theme,
           home: Column(
             children: [
-              RaisedButton(
+              ElevatedButton(
                 key: const Key('raised_button_1'),
                 onPressed: () {
                   setState(() => themeState = DarkThemeState());
                 },
+                child: const Text('raised_button_1'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 key: const Key('raised_button_2'),
                 onPressed: () {
                   setState(() => themeState = themeState);
                 },
+                child: const Text('raised_button_2'),
               ),
             ],
           ),
@@ -82,7 +84,7 @@ class CounterState extends StateNotifier<int> {
 }
 
 class MyCounterApp extends StatefulWidget {
-  const MyCounterApp({Key key}) : super(key: key);
+  const MyCounterApp({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => MyCounterAppState();
@@ -119,9 +121,10 @@ class MyCounterAppState extends State<MyCounterApp> {
                 );
               },
             ),
-            RaisedButton(
+            ElevatedButton(
               key: const Key('myCounterAppIncrementButton'),
               onPressed: _counter.increment,
+              child: const Text('myCounterAppIncrementButton'),
             )
           ],
         ),
@@ -132,47 +135,6 @@ class MyCounterAppState extends State<MyCounterApp> {
 
 void main() {
   group('LidBuilder', () {
-    testWidgets('throws if initialized with null stateNotifier and builder',
-        (tester) async {
-      try {
-        await tester.pumpWidget(
-          LidBuilder<ThemeData>(
-            stateNotifier: null,
-            builder: null,
-          ),
-        );
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws if initialized with null stateNotifier',
-        (tester) async {
-      try {
-        await tester.pumpWidget(
-          LidBuilder<ThemeData>(
-            stateNotifier: null,
-            builder: (_, __) => const SizedBox.shrink(),
-          ),
-        );
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws if initialized with null builder', (tester) async {
-      try {
-        await tester.pumpWidget(
-          LidBuilder<ThemeData>(
-            stateNotifier: ThemeState(),
-            builder: null,
-          ),
-        );
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
     testWidgets('debugFillProperties', (tester) async {
       final counterState = CounterState();
       final child = LidBuilder<int>(
@@ -195,11 +157,13 @@ void main() {
 
       final state = tester.state(find.byWidget(child));
 
-      expect(state.toString(), endsWith('(state: 0)'));
+      expect(state.toString(),
+          endsWith("(state: 0, stateNotifier: Instance of 'CounterState')"));
 
       counterState.increment();
 
-      expect(state.toString(), endsWith('(state: 1)'));
+      expect(state.toString(),
+          endsWith("(state: 1, stateNotifier: Instance of 'CounterState')"));
     });
 
     testWidgets('passes initial state to widget', (tester) async {
@@ -407,6 +371,41 @@ void main() {
       final conditionalCounterText4 = tester
           .widget<Text>(find.byKey(const Key('myCounterAppTextCondition')));
       expect(conditionalCounterText4.data, '2');
+    });
+
+    group('with extension', () {
+      testWidgets(
+          'receives events and sends state updates to widget when '
+          'buildWhen is true', (tester) async {
+        final themeState = ThemeState();
+        var numBuilds = 0;
+        await tester.pumpWidget(
+          themeState.builder(
+            buildWhen: (oldState, newState) => newState == ThemeData.light(),
+            builder: (_, theme) {
+              ++numBuilds;
+              return MaterialApp(
+                key: const Key('material_app'),
+                theme: theme,
+                home: const SizedBox.shrink(),
+              );
+            },
+          ),
+        );
+
+        final materialApp = tester.widget<MaterialApp>(
+          find.byKey(const Key('material_app')),
+        );
+
+        expect(numBuilds, 1);
+        themeState.setDarkTheme();
+        await tester.pump();
+        themeState.setLightTheme();
+        await tester.pump();
+
+        expect(materialApp.theme, ThemeData.light());
+        expect(numBuilds, 2);
+      });
     });
   });
 }

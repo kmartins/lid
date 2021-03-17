@@ -9,11 +9,11 @@
 
 A Flutter library built to expose widgets that integrate with `state notifier`. Built to work with the [state_notifier](https://pub.dev/packages/state_notifier) state management packages.
 
-It's very similar to widgets the [bloc](https://pub.dev/packages/flutter_bloc) for `cubit`.
+It's very similar to widgets the [bloc](https://pub.dev/packages/flutter_bloc).
 
 ## Motivation
 
-Already exists a package to integrate with the status notifier, called [flutter_state_notifier](https://pub.dev/packages/flutter_state_notifier), but `lid` covers different cases.
+Already exists a package to integrate with the status notifier, called [flutter_state_notifier](https://pub.dev/packages/flutter_state_notifier), but `flutter_lid` covers different cases.
 
 ## Usage
 
@@ -243,6 +243,35 @@ LidConsumer<StateType>(
     // return widget here based on State Notifier's state
   }
 )
+```
+
+## Extensions 
+
+There are 3 extensions for -> LidBuilder, LidListener and LidConsumer.
+
+It's super simple to use:
+
+``` dart
+// Same as LidBuilder
+stateNotifier.toLidBuilder(  
+  buildWhen: (previousState, state) {},
+  builder: (context, state) {},
+);
+
+// Same as LidListener
+stateNotifier.toLidListener(  
+  listenWhen: (previousState, state) {},
+  listener: (context, state) {},
+  child: const SizedBox(),
+);
+
+// Same as LidConsumer
+stateNotifier.toLidConsumer(
+  listenWhen: (previous, current) {},
+  listener: (context, state) {},
+  buildWhen: (previous, current) {},
+  builder: (context, state) {}
+);
 ```
 
 ## Maintainers

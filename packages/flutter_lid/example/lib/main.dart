@@ -9,7 +9,7 @@ void main() => runApp(const LidCounter());
 /// * [lid](https://pub.dev/packages/lid)
 /// to manage the state of a counter.
 class LidCounter extends StatelessWidget {
-  const LidCounter({Key key}) : super(key: key);
+  const LidCounter({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class LidCounter extends StatelessWidget {
 /// A [StatelessWidget] which demonstrates
 /// how to consume and interact with a [CounterState].
 class CounterPage extends StatelessWidget {
-  CounterPage({Key key}) : super(key: key);
+  CounterPage({Key? key}) : super(key: key);
 
   final _counter = CounterState();
 
@@ -48,14 +48,14 @@ class CounterPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: FloatingActionButton(
-              onPressed: _counter.increment,
+              onPressed: () => _counter.increment(),
               child: const Icon(Icons.add),
             ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: FloatingActionButton(
-              onPressed: _counter.decrement,
+              onPressed: () => _counter.decrement(),
               child: const Icon(Icons.remove),
             ),
           ),

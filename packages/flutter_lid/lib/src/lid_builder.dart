@@ -59,13 +59,11 @@ typedef BuilderCondition<T> = bool Function(T previous, T current);
 class LidBuilder<T> extends StatefulWidget {
   /// {@macro lid_builder}
   const LidBuilder({
-    Key key,
-    @required this.builder,
-    @required this.stateNotifier,
+    Key? key,
+    required this.builder,
+    required this.stateNotifier,
     this.buildWhen,
-  })  : assert(builder != null),
-        assert(stateNotifier != null),
-        super(key: key);
+  }) : super(key: key);
 
   /// The [builder] function which will be invoked on each widget build.
   /// The [builder] takes the `BuildContext` and current `state` and
@@ -77,7 +75,7 @@ class LidBuilder<T> extends StatefulWidget {
   final StateNotifier<T> stateNotifier;
 
   /// {@macro lid_builder_build_when}
-  final BuilderCondition<T> buildWhen;
+  final BuilderCondition<T>? buildWhen;
 
   @override
   _LidBuilderState<T> createState() => _LidBuilderState<T>();
@@ -99,13 +97,15 @@ class LidBuilder<T> extends StatefulWidget {
 }
 
 class _LidBuilderState<T> extends State<LidBuilder<T>> {
-  T _state;
-  VoidCallback _removeListener;
+  late T _state;
+  T? _previousState;
+  late StateNotifier<T> _stateNotifier = widget.stateNotifier;
+  VoidCallback? _removeListener;
 
   @override
   void initState() {
     super.initState();
-    _listen(widget.stateNotifier);
+    _listen();
   }
 
   @override
@@ -113,31 +113,28 @@ class _LidBuilderState<T> extends State<LidBuilder<T>> {
     super.didUpdateWidget(oldWidget);
     if (widget.stateNotifier != oldWidget.stateNotifier) {
       //Restart state
-      _state = null;
-      _listen(widget.stateNotifier);
+      _previousState = null;
+      _stateNotifier = widget.stateNotifier;
+      _listen();
     }
   }
 
-  void _listen(StateNotifier<T> notifier) {
+  void _listen() {
     _removeListener?.call();
-    _removeListener = notifier.addListener(
-      _listener,
-    );
+    _removeListener = _stateNotifier.addListener(_listener);
   }
 
   // Build first time forever, without pass through [buildWhen].
   // First time = _lid == nul
   void _listener(T value) {
-    var builderCondition = true;
-    if (_state != null) {
-      builderCondition = widget.buildWhen?.call(_state, value) ??
-          _defaultBuilderCondition(_state, value);
-    }
+    _state = value;
+    final builderCondition =
+        widget.buildWhen?.call(_previousState ?? _state, value) ??
+            _defaultBuilderCondition(_previousState ?? _state, value);
     if (builderCondition) {
-      setState(() => _state = value);
-    } else {
-      _state = value;
+      setState(() {});
     }
+    _previousState = _state;
   }
 
   @override
@@ -152,7 +149,11 @@ class _LidBuilderState<T> extends State<LidBuilder<T>> {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<T>('state', _state));
+    properties
+      ..add(DiagnosticsProperty<T>('state', _state))
+      ..add(
+        DiagnosticsProperty<StateNotifier<T>>('stateNotifier', _stateNotifier),
+      );
   }
 
   /// Not to rebuild if previous `state` is equal current `state`.

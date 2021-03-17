@@ -38,6 +38,7 @@ linter:
     # All non nullable named parameters should be and annotated with @required.
     # This allows API consumers to get warnings via lint rather than a crash a runtime.
     # Might become obsolete with Non-Nullable types
+    # pedantic: enabled
     # http://dart-lang.github.io/linter/lints/always_require_non_null_named_parameters.html
     - always_require_non_null_named_parameters
 
@@ -85,6 +86,11 @@ linter:
     # pedantic: disabled
     # http://dart-lang.github.io/linter/lints/avoid_classes_with_only_static_members.html
     - avoid_classes_with_only_static_members
+
+    # Never accidentally use dynamic invocations
+    # Dart SDK: unreleased • (Linter vnull)
+    # https://dart-lang.github.io/linter/lints/avoid_dynamic_calls.html
+    # avoid_dynamic_calls
 
     # Only useful when targeting JS
     # pedantic: disabled
@@ -199,6 +205,7 @@ linter:
     - avoid_shadowing_type_parameters
 
     # A single cascade operator can be replaced with a normal method call
+    # pedantic: enabled
     # https://dart-lang.github.io/linter/lints/avoid_single_cascade_in_expression_statements.html
     - avoid_single_cascade_in_expression_statements
 
@@ -207,6 +214,11 @@ linter:
     # pedantic: disabled
     # https://dart-lang.github.io/linter/lints/avoid_slow_async_io.html
     # - avoid_slow_async_io
+
+    # Don't use .toString() in production code which might be minified
+    # Dart SDK: >= 2.10.0-144.0.dev • (Linter v0.1.119)
+    # https://dart-lang.github.io/linter/lints/avoid_type_to_string.html
+    - avoid_type_to_string
 
     # Don't use a parameter names which can be confused with a types (i.e. int, bool, num, ...)
     # pedantic: enabled
@@ -237,6 +249,7 @@ linter:
     - avoid_web_libraries_in_flutter
 
     # Use the await keyword only for futures. There is nothing to await in synchronous code
+    # pedantic: enabled
     # https://dart-lang.github.io/linter/lints/await_only_futures.html
     - await_only_futures
 
@@ -262,6 +275,11 @@ linter:
     #
     # https://dart-lang.github.io/linter/lints/cascade_invocations.html
     # - cascade_invocations
+
+    # Don't cast T? to T. Use ! instead
+    # Dart SDK: >= 2.11.0-182.0.dev • (Linter v0.1.120)
+    # https://dart-lang.github.io/linter/lints/cast_nullable_to_non_nullable.html
+    - cast_nullable_to_non_nullable
 
     # False positives, not reliable enough
     # - https://github.com/dart-lang/linter/issues/1381
@@ -302,6 +320,21 @@ linter:
     # https://dart-lang.github.io/linter/lints/directives_ordering.html
     - directives_ordering
 
+    # String.fromEnvironment looks up env variables at compile time. The variable is baked in by the compiler
+    # and can't be changed by environment variables.
+    #
+    # For dart apps:
+    # Better look up a environment variable at runtime with Platform.environment
+    # or use code generation to define variables at compile time.
+    #
+    # For Flutter apps:
+    # String.fromEnvironment is the recommended way to include variables defined with `flutter build --dart-define`
+    #
+    # pedantic: disabled
+    # Dart SDK: >= 2.10.0-0.0.dev • (Linter v0.1.117)
+    # https://dart-lang.github.io/linter/lints/do_not_use_environment.html
+    # - do_not_use_environment
+
     # Add a comment why no further error handling is required
     # pedantic: enabled
     # https://dart-lang.github.io/linter/lints/empty_catches.html
@@ -316,6 +349,12 @@ linter:
     # pedantic: disabled
     # https://dart-lang.github.io/linter/lints/empty_statements.html
     - empty_statements
+
+    # Enums aren't powerful enough, now enum like classes get the same linting support
+    # pedantic: disabled
+    # Dart SDK: >= 2.9.0-12.0.dev • (Linter v0.1.116)
+    # https://dart-lang.github.io/linter/lints/exhaustive_cases.html
+    - exhaustive_cases
 
     # Follow dart file naming schema
     # https://dart-lang.github.io/linter/lints/file_names.html
@@ -423,6 +462,12 @@ linter:
     # https://dart-lang.github.io/linter/lints/non_constant_identifier_names.html
     - non_constant_identifier_names
 
+    # Generic T might have a value of String or String?. Both are valid.
+    # This lint triggers when ! is used on T? casting (String?)? to String and not (String?)? to String?
+    # Dart SDK: >= 2.11.0-182.0.dev • (Linter v0.1.120)
+    # https://dart-lang.github.io/linter/lints/null_check_on_nullable_type_parameter.html
+    - null_check_on_nullable_type_parameter
+
     # Might become irrelevant when non-nullable types land in dart. Until then use this lint check which checks for
     # non null arguments for specific dart sdk methods.
     # pedantic: enabled
@@ -463,7 +508,6 @@ linter:
     - package_prefixed_library_names
 
     # Most likely a mistake, if not: bad practice
-    # Not compatible with NNBD
     # pedantic: disabled
     # https://dart-lang.github.io/linter/lints/parameter_assignments.html
     - parameter_assignments
@@ -587,6 +631,7 @@ linter:
     - prefer_initializing_formals
 
     # Easier move towards const, and way easier to read
+    # pedantic: enabled
     # https://dart-lang.github.io/linter/lints/prefer_inlined_adds.html
     - prefer_inlined_adds
 
@@ -663,12 +708,18 @@ linter:
     # https://dart-lang.github.io/linter/lints/recursive_getters.html
     - recursive_getters
 
+    # Flutter only, prefer SizedBox over Container which offers a const constructors
+    # Dart SDK: >= 2.9.0-4.0.dev • (Linter v0.1.115)
+    # https://dart-lang.github.io/linter/lints/sized_box_for_whitespace.html
+    - sized_box_for_whitespace
+
     # Follow dart style use triple slashes
     # pedantic: enabled
     # https://dart-lang.github.io/linter/lints/slash_for_doc_comments.html
     - slash_for_doc_comments
 
     # Flutter only, always put child last
+    # pedantic: enabled
     # https://dart-lang.github.io/linter/lints/sort_child_properties_last.html
     - sort_child_properties_last
 
@@ -698,6 +749,11 @@ linter:
     # https://dart-lang.github.io/linter/lints/throw_in_finally.html
     - throw_in_finally
 
+    # Help the compiler at compile time with non-null asserts rather than crashing at runtime
+    # Dart SDK: >= 2.11.0-182.0.dev • (Linter v0.1.120)
+    # https://dart-lang.github.io/linter/lints/tighten_type_of_initializing_formals.html
+    - tighten_type_of_initializing_formals
+
     # Type annotations make the compiler intelligent, use them
     # https://dart-lang.github.io/linter/lints/type_annotate_public_apis.html
     - type_annotate_public_apis
@@ -719,6 +775,7 @@ linter:
     - unnecessary_await_in_return
 
     # Remove unnecessary braces
+    # pedantic: enabled
     # https://dart-lang.github.io/linter/lints/unnecessary_brace_in_string_interps.html
     - unnecessary_brace_in_string_interps
 
@@ -732,6 +789,7 @@ linter:
     # - unnecessary_final
 
     # Getter/setters can be added later on in a non API breaking manner
+    # pedantic: enabled
     # https://dart-lang.github.io/linter/lints/unnecessary_getters_setters.html
     - unnecessary_getters_setters
 
@@ -753,10 +811,20 @@ linter:
     # https://dart-lang.github.io/linter/lints/unnecessary_null_aware_assignments.html
     - unnecessary_null_aware_assignments
 
+    # Remove ! when already non-nullable
+    # Dart SDK: >= 2.10.0-144.0.dev • (Linter v0.1.119)
+    # https://dart-lang.github.io/linter/lints/unnecessary_null_checks.html
+    - unnecessary_null_checks
+
     # Don't assign `null` when value is already `null`.
     # pedantic: enabled
     # https://dart-lang.github.io/linter/lints/unnecessary_null_in_if_null_operators.html
     - unnecessary_null_in_if_null_operators
+
+    # If a variable doesn't change and is initialized, no need to define it as nullable (NNDB)
+    # Dart SDK: >= 2.10.0-10.0.dev • (Linter v0.1.118)
+    # https://dart-lang.github.io/linter/lints/unnecessary_nullable_for_final_variable_declarations.html
+    - unnecessary_nullable_for_final_variable_declarations
 
     # Remove overrides which simply call super
     # https://dart-lang.github.io/linter/lints/unnecessary_overrides.html
@@ -780,7 +848,7 @@ linter:
     # https://dart-lang.github.io/linter/lints/unnecessary_string_escapes.html
     - unnecessary_string_escapes
 
-    # Especially with NNBD a no-brainer
+    # Completely unnecessary code, simplify to save a few CPU cycles
     # Dart SDK: >= 2.8.0-dev.10.0 • (Linter v0.1.110)
     # https://dart-lang.github.io/linter/lints/unnecessary_string_interpolations.html
     - unnecessary_string_interpolations
@@ -796,10 +864,12 @@ linter:
     - unrelated_type_equality_checks
 
     # Web only
+    # pedantic: enabled
     # https://dart-lang.github.io/linter/lints/unsafe_html.html
     - unsafe_html
 
     # Always use hex syntax Color(0x00000001), never Color(1)
+    # pedantic: enabled
     # https://dart-lang.github.io/linter/lints/use_full_hex_values_for_flutter_colors.html
     - use_full_hex_values_for_flutter_colors
 
@@ -812,6 +882,13 @@ linter:
     # Dart SDK: >= 2.8.0-dev.1.0 • (Linter v0.1.108)
     # https://dart-lang.github.io/linter/lints/use_key_in_widget_constructors.html
     # - use_key_in_widget_constructors
+
+    # Some might argue late is a code smell, this lint is very opinionated. It triggers only for private fields and
+    # therefore might actually cleanup some code.
+    # There is no performance impact either way https://github.com/dart-lang/linter/pull/2189#discussion_r457945301
+    # Dart SDK: >= 2.10.0-10.0.dev • (Linter v0.1.118)
+    # https://dart-lang.github.io/linter/lints/use_late_for_private_fields_and_variables.html
+    - use_late_for_private_fields_and_variables
 
     # Use rethrow to preserve the original stacktrace.
     # https://dart.dev/guides/language/effective-dart/usage#do-use-rethrow-to-rethrow-a-caught-exception

@@ -1,6 +1,6 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lid/flutter_lid.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:state_notifier/state_notifier.dart';
 
 class CounterState extends StateNotifier<int> {
@@ -12,31 +12,19 @@ class CounterState extends StateNotifier<int> {
 class MyApp extends StatefulWidget {
   final CounterState counterState;
   const MyApp({
-    Key key,
+    Key? key,
     this.onListenerCalled,
-    this.counterState,
+    required this.counterState,
   }) : super(key: key);
 
-  final LidWidgetListener<int> onListenerCalled;
+  final LidWidgetListener<int>? onListenerCalled;
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  CounterState _counterState;
-
-  @override
-  void initState() {
-    super.initState();
-    _counterState = widget.counterState;
-  }
-
-  @override
-  void dispose() {
-    _counterState.dispose();
-    super.dispose();
-  }
+  late CounterState _counterState = widget.counterState;
 
   @override
   Widget build(BuildContext context) {
@@ -49,21 +37,24 @@ class _MyAppState extends State<MyApp> {
           },
           child: Column(
             children: [
-              RaisedButton(
+              ElevatedButton(
                 key: const Key('lid_listener_reset_button'),
                 onPressed: () {
                   setState(() => _counterState = CounterState());
                 },
+                child: const Text('lid_listener_reset_button'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 key: const Key('lid_listener_noop_button'),
                 onPressed: () {
                   setState(() => _counterState = _counterState);
                 },
+                child: const Text('lid_listener_noop_button'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 key: const Key('lid_listener_increment_button'),
-                onPressed: () => _counterState.increment(),
+                onPressed: _counterState.increment,
+                child: const Text('lid_listener_increment_button'),
               ),
             ],
           ),
@@ -75,52 +66,6 @@ class _MyAppState extends State<MyApp> {
 
 void main() {
   group('LidListener', () {
-    testWidgets(
-        'throws if initialized with null state notifier, listener, and child',
-        (tester) async {
-      try {
-        await tester.pumpWidget(
-          LidListener<int>(
-            stateNotifier: null,
-            listener: null,
-          ),
-        );
-        fail('should throw AssertionError');
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws if initialized with null listener and child',
-        (tester) async {
-      try {
-        await tester.pumpWidget(
-          LidListener<int>(
-            stateNotifier: CounterState(),
-            listener: null,
-          ),
-        );
-        fail('should throw AssertionError');
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
-    testWidgets('throws if initialized with null state notifier',
-        (tester) async {
-      try {
-        await tester.pumpWidget(
-          LidListener<int>(
-            stateNotifier: null,
-            listener: (_, __) {},
-          ),
-        );
-        fail('should throw AssertionError');
-      } on dynamic catch (error) {
-        expect(error, isAssertionError);
-      }
-    });
-
     testWidgets('renders child properly', (tester) async {
       const targetKey = Key('lid_listener_container');
       await tester.pumpWidget(
@@ -176,24 +121,6 @@ void main() {
       expect(states, expectedStates);
     });
 
-    testWidgets('calls listener on single state change', (tester) async {
-      final counterState = CounterState();
-      final states = <int>[];
-      const expectedStates = [1];
-      await tester.pumpWidget(
-        LidListener<int>(
-          stateNotifier: counterState,
-          listener: (_, state) {
-            states.add(state);
-          },
-          child: const SizedBox(),
-        ),
-      );
-      counterState.increment();
-      await tester.pump();
-      expect(states, expectedStates);
-    });
-
     testWidgets('calls listener on multiple state change', (tester) async {
       final counterState = CounterState();
       final states = <int>[];
@@ -219,7 +146,7 @@ void main() {
         'and unsubscribes from old state notifier', (tester) async {
       final counterState = CounterState();
       var listenerCallCount = 0;
-      int latestState;
+      int? latestState;
       final incrementFinder = find.byKey(
         const Key('lid_listener_increment_button'),
       );
@@ -260,7 +187,7 @@ void main() {
         'and stays subscribed to current state notifier', (tester) async {
       final counterState = CounterState();
       var listenerCallCount = 0;
-      int latestState;
+      int? latestState;
       final incrementFinder = find.byKey(
         const Key('lid_listener_increment_button'),
       );
@@ -299,7 +226,7 @@ void main() {
     testWidgets(
         'calls listenWhen on single state change with correct previous '
         'and current states', (tester) async {
-      int latestPreviousState;
+      int? latestPreviousState;
       var conditionCallCount = 0;
       final states = <int>[];
       final counterState = CounterState();
@@ -328,7 +255,7 @@ void main() {
     testWidgets(
         'calls listenWhen with previous listener state and current state notifier state',
         (tester) async {
-      int latestPreviousState;
+      int? latestPreviousState;
       var listenWhenCallCount = 0;
       final states = <int>[];
       final counterState = CounterState();
@@ -364,7 +291,7 @@ void main() {
     testWidgets(
         'calls listenWhen on multiple state change with correct previous '
         'and current states', (tester) async {
-      int latestPreviousState;
+      int? latestPreviousState;
       var listenWhenCallCount = 0;
       final states = <int>[];
       final counterState = CounterState();
@@ -482,6 +409,32 @@ void main() {
       await tester.pump();
 
       expect(states, expectedStates);
+    });
+
+    group('with extension', () {
+      testWidgets(
+          'does not call listener when listenWhen returns false '
+          'on multiple state changes', (tester) async {
+        final states = <int>[];
+        final counterState = CounterState();
+        const expectedStates = <int>[];
+        await tester.pumpWidget(
+          counterState.listener(
+            listenWhen: (_, __) => false,
+            listener: (_, state) => states.add(state),
+            child: const SizedBox.shrink(),
+          ),
+        );
+        counterState.increment();
+        await tester.pump();
+        counterState.increment();
+        await tester.pump();
+        counterState.increment();
+        await tester.pump();
+        counterState.increment();
+        await tester.pump();
+        expect(states, expectedStates);
+      });
     });
   });
 }
