@@ -32,7 +32,7 @@ jobs:
       - name: Run tests
         run: flutter test --no-pub --coverage --test-randomize-ordering-seed random
       - name: Check Code Coverage
-        uses: ChicagoFlutter/lcov-cop@v1.0.0
+        uses: ChicagoFlutter/lcov-cop@v1.0.2
         with:
           path: packages/flutter_bloc/coverage/lcov.info
       - name: Upload coverage to Codecov
