@@ -1,3 +1,7 @@
+## [1.1.1]
+
+- Add animation between state changes
+- Rename extensions
 ## [1.0.0]
 
 - Null Safety
