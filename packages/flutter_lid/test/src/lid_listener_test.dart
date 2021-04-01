@@ -419,7 +419,7 @@ void main() {
         final counterState = CounterState();
         const expectedStates = <int>[];
         await tester.pumpWidget(
-          counterState.listener(
+          counterState.toLidListener(
             listenWhen: (_, __) => false,
             listener: (_, state) => states.add(state),
             child: const SizedBox.shrink(),

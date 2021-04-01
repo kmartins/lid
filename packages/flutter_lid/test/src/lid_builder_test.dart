@@ -29,12 +29,18 @@ class MyThemeApp extends StatefulWidget {
     Key? key,
     required StateNotifier<ThemeData> themeState,
     required void Function() onBuild,
-  })   : _themeState = themeState,
+    this.animate = false,
+    this.transitionBuilder = AnimatedSwitcher.defaultTransitionBuilder,
+    this.duration = const Duration(milliseconds: 300),
+  })  : _themeState = themeState,
         _onBuild = onBuild,
         super(key: key);
 
   final StateNotifier<ThemeData> _themeState;
   final void Function() _onBuild;
+  final bool animate;
+  final AnimatedSwitcherTransitionBuilder transitionBuilder;
+  final Duration duration;
 
   @override
   State<MyThemeApp> createState() => MyThemeAppState();
@@ -48,6 +54,9 @@ class MyThemeAppState extends State<MyThemeApp> {
   Widget build(BuildContext context) {
     return LidBuilder<ThemeData>(
       stateNotifier: themeState,
+      animate: widget.animate,
+      transitionBuilder: widget.transitionBuilder,
+      duration: widget.duration,
       builder: (context, theme) {
         onBuild();
         return MaterialApp(
@@ -149,9 +158,9 @@ void main() {
       );
 
       expect(
-        child.toString(),
-        "LidBuilder<int>(stateNotifier: Instance of 'CounterState', has builder, has buildWhen)",
-      );
+          child.toString(),
+          "LidBuilder<int>(stateNotifier: Instance of 'CounterState', has builder, has buildWhen, " +
+              "not animates when changing state, duration: 300ms, has transitionBuilder)");
 
       await tester.pumpWidget(child);
 
@@ -185,20 +194,20 @@ void main() {
       expect(numBuilds, 1);
     });
 
-    testWidgets('receives events and sends state updates to widget',
-        (tester) async {
+    testWidgets('animates widget when receives a new state', (tester) async {
       final themeState = ThemeState();
       var numBuilds = 0;
       await tester.pumpWidget(
         MyThemeApp(
           themeState: themeState,
+          animate: true,
           onBuild: () => numBuilds++,
         ),
       );
 
       themeState.setDarkTheme();
 
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 300));
 
       final materialApp = tester.widget<MaterialApp>(
         find.byKey(const Key('material_app')),
@@ -380,7 +389,7 @@ void main() {
         final themeState = ThemeState();
         var numBuilds = 0;
         await tester.pumpWidget(
-          themeState.builder(
+          themeState.toLidBuilder(
             buildWhen: (oldState, newState) => newState == ThemeData.light(),
             builder: (_, theme) {
               ++numBuilds;

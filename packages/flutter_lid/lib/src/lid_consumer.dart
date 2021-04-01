@@ -88,6 +88,15 @@ class LidConsumer<S> extends StatelessWidget {
   /// The [stateNotifier] that the [LidConsumer] will interact with.
   final StateNotifier<S> stateNotifier;
 
+  /// Animates when change state, using [AnimatedSwitcher]
+  final bool animate;
+
+  /// Type of the animation, the default animation is FadeIn
+  final AnimatedSwitcherTransitionBuilder transitionBuilder;
+
+  /// The duration of the animation
+  final Duration duration;
+
   /// {@macro lid_consumer}
   const LidConsumer({
     Key? key,
@@ -96,6 +105,9 @@ class LidConsumer<S> extends StatelessWidget {
     required this.builder,
     this.listenWhen,
     this.buildWhen,
+    this.animate = false,
+    this.transitionBuilder = AnimatedSwitcher.defaultTransitionBuilder,
+    this.duration = const Duration(milliseconds: 300),
   }) : super(key: key);
 
   @override
@@ -130,6 +142,15 @@ class LidConsumer<S> extends StatelessWidget {
       )
       ..add(
         ObjectFlagProperty<ListenerCondition<S>>.has('listenWhen', listenWhen),
+      )
+      ..add(FlagProperty('animate',
+          value: animate,
+          ifTrue: 'animates when changing state',
+          ifFalse: 'not animates when changing state'))
+      ..add(IntProperty('duration', duration.inMilliseconds, unit: 'ms'))
+      ..add(
+        ObjectFlagProperty<AnimatedSwitcherTransitionBuilder>.has(
+            'transitionBuilder', transitionBuilder),
       );
   }
 }

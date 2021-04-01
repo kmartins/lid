@@ -135,6 +135,21 @@ LidBuilder<StateType>(
 )
 ```
 
+There is the possibility to animate between state changes. 
+
+```dart
+LidBuilder<StateType>(
+  stateNotifier: stateNotifier, // provide the state notifier instance
+  animate: true, // Setting to `true`, fadeIn animation will be performed between widget changes.
+  transitionBuilder: AnimatedSwitcher.defaultTransitionBuilder, // Here you can modify the default animation which is FadeIn.
+  duration: Duration(milliseconds: 300), // Sets the duration of the animation.  
+  builder: (context, state) {
+    // return widget here based on State Notifier's state
+  }
+)
+```
+
+
 **LidListener** is a Flutter widget which takes a `LidWidgetListener` and requires a `stateNotifier` and invokes the `listener` in response to state changes in the state notifier. It should be used for functionality that needs to occur once per state change such as navigation, showing a `SnackBar`, showing a `Dialog`, etc...
 
 `listener` is only called once for each state change (**NOT** including `initialState`) unlike `builder` in `LidBuilder` and is a `void` function.
@@ -238,6 +253,23 @@ LidConsumer<StateType>(
   buildWhen: (previous, current) {
     // return true/false to determine whether or not
     // to rebuild the widget with state
+  },
+  builder: (context, state) {
+    // return widget here based on State Notifier's state
+  }
+)
+```
+
+There is the possibility to animate between state changes. 
+
+```dart
+LidConsumer<StateType>(
+  stateNotifier: stateNotifier, // provide the state notifier instance
+  animate: true, // Setting to `true`, fadeIn animation will be performed between widget changes.
+  transitionBuilder: AnimatedSwitcher.defaultTransitionBuilder, // Here you can modify the default animation which is FadeIn.
+  duration: Duration(milliseconds: 300), // Sets the duration of the animation.  
+  listener: (context, state) {
+    // do stuff here based on State Notifier's state
   },
   builder: (context, state) {
     // return widget here based on State Notifier's state
