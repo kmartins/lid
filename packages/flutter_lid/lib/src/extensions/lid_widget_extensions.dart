@@ -4,7 +4,7 @@ import 'package:state_notifier/state_notifier.dart';
 import '../../flutter_lid.dart';
 
 extension StateNotifierExtension<S> on StateNotifier<S> {
-  Widget builder({
+  Widget toLidBuilder({
     Key? key,
     required LidWidgetBuilder<S> builder,
     BuilderCondition<S>? buildWhen,
@@ -24,7 +24,7 @@ extension StateNotifierExtension<S> on StateNotifier<S> {
     );
   }
 
-  Widget listener({
+  Widget toLidListener({
     Key? key,
     required LidWidgetListener<S> listener,
     ListenerCondition<S>? listenWhen,
@@ -39,7 +39,7 @@ extension StateNotifierExtension<S> on StateNotifier<S> {
     );
   }
 
-  Widget consumer({
+  Widget toLidConsumer({
     Key? key,
     required LidWidgetBuilder<S> builder,
     BuilderCondition<S>? buildWhen,

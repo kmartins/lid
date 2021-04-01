@@ -389,7 +389,7 @@ void main() {
         final themeState = ThemeState();
         var numBuilds = 0;
         await tester.pumpWidget(
-          themeState.builder(
+          themeState.toLidBuilder(
             buildWhen: (oldState, newState) => newState == ThemeData.light(),
             builder: (_, theme) {
               ++numBuilds;

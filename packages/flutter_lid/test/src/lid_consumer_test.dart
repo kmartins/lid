@@ -220,7 +220,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
-              body: counterState.consumer(
+              body: counterState.toLidConsumer(
                 buildWhen: (previous, current) => (previous + current) % 3 == 0,
                 builder: (context, state) {
                   builderStates.add(state);
