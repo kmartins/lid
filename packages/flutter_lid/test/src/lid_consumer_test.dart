@@ -29,7 +29,8 @@ void main() {
 
       expect(
         child.toString(),
-        "LidConsumer<int>(stateNotifier: Instance of 'CounterState', has builder, has buildWhen, has listener, has listenWhen)",
+        "LidConsumer<int>(stateNotifier: Instance of 'CounterState', has builder, has buildWhen, " +
+            "has listener, has listenWhen, not animates when changing state, duration: 300ms, has transitionBuilder)",
       );
     });
 
@@ -165,6 +166,47 @@ void main() {
       expect(find.text('State: 2'), findsOneWidget);
       expect(builderStates, [0, 1, 2]);
       expect(listenerStates, [2]);
+    });
+
+    testWidgets('animates widget when animate evaluates to true',
+        (tester) async {
+      final counterState = CounterState();
+      final listenerStates = <int>[];
+      final builderStates = <int>[];
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: LidConsumer<int>(
+              stateNotifier: counterState,
+              animate: true,
+              builder: (context, state) {
+                builderStates.add(state);
+                return Text('State: $state');
+              },
+              listener: (_, state) {
+                listenerStates.add(state);
+              },
+            ),
+          ),
+        ),
+      );
+      expect(find.text('State: 0'), findsOneWidget);
+      expect(builderStates, [0]);
+      expect(listenerStates, isEmpty);
+
+      counterState.increment();
+      await tester.pumpAndSettle(const Duration(milliseconds: 300));
+
+      expect(find.text('State: 1'), findsOneWidget);
+      expect(builderStates, [0, 1]);
+      expect(listenerStates, [1]);
+
+      counterState.increment();
+      await tester.pumpAndSettle(const Duration(milliseconds: 300));
+
+      expect(find.text('State: 2'), findsOneWidget);
+      expect(builderStates, [0, 1, 2]);
+      expect(listenerStates, [1, 2]);
     });
 
     group('with extension', () {

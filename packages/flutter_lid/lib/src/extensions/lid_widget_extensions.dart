@@ -8,12 +8,19 @@ extension StateNotifierExtension<S> on StateNotifier<S> {
     Key? key,
     required LidWidgetBuilder<S> builder,
     BuilderCondition<S>? buildWhen,
+    bool animate = false,
+    AnimatedSwitcherTransitionBuilder transitionBuilder =
+        AnimatedSwitcher.defaultTransitionBuilder,
+    Duration duration = const Duration(milliseconds: 300),
   }) {
     return LidBuilder<S>(
       key: key,
       stateNotifier: this,
       builder: builder,
       buildWhen: buildWhen,
+      animate: animate,
+      transitionBuilder: transitionBuilder,
+      duration: duration,
     );
   }
 
@@ -38,6 +45,10 @@ extension StateNotifierExtension<S> on StateNotifier<S> {
     BuilderCondition<S>? buildWhen,
     required LidWidgetListener<S> listener,
     ListenerCondition<S>? listenWhen,
+    bool animate = false,
+    AnimatedSwitcherTransitionBuilder transitionBuilder =
+        AnimatedSwitcher.defaultTransitionBuilder,
+    Duration duration = const Duration(milliseconds: 300),
   }) {
     return LidConsumer<S>(
       key: key,
@@ -46,6 +57,9 @@ extension StateNotifierExtension<S> on StateNotifier<S> {
       buildWhen: buildWhen,
       listener: listener,
       listenWhen: listenWhen,
+      animate: animate,
+      transitionBuilder: transitionBuilder,
+      duration: duration,
     );
   }
 }

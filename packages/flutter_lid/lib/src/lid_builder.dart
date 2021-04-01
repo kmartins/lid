@@ -63,6 +63,9 @@ class LidBuilder<T> extends StatefulWidget {
     required this.builder,
     required this.stateNotifier,
     this.buildWhen,
+    this.animate = false,
+    this.transitionBuilder = AnimatedSwitcher.defaultTransitionBuilder,
+    this.duration = const Duration(milliseconds: 300),
   }) : super(key: key);
 
   /// The [builder] function which will be invoked on each widget build.
@@ -76,6 +79,15 @@ class LidBuilder<T> extends StatefulWidget {
 
   /// {@macro lid_builder_build_when}
   final BuilderCondition<T>? buildWhen;
+
+  /// Animates when change state, using [AnimatedSwitcher]
+  final bool animate;
+
+  /// Type of the animation, the default animation is FadeIn
+  final AnimatedSwitcherTransitionBuilder transitionBuilder;
+
+  /// The duration of the animation
+  final Duration duration;
 
   @override
   _LidBuilderState<T> createState() => _LidBuilderState<T>();
@@ -92,6 +104,15 @@ class LidBuilder<T> extends StatefulWidget {
       )
       ..add(
         ObjectFlagProperty<BuilderCondition<T>>.has('buildWhen', buildWhen),
+      )
+      ..add(FlagProperty('animate',
+          value: animate,
+          ifTrue: 'animates when changing state',
+          ifFalse: 'not animates when changing state'))
+      ..add(IntProperty('duration', duration.inMilliseconds, unit: 'ms'))
+      ..add(
+        ObjectFlagProperty<AnimatedSwitcherTransitionBuilder>.has(
+            'transitionBuilder', transitionBuilder),
       );
   }
 }
@@ -144,7 +165,16 @@ class _LidBuilderState<T> extends State<LidBuilder<T>> {
   }
 
   @override
-  Widget build(BuildContext context) => widget.builder(context, _state);
+  Widget build(BuildContext context) {
+    if (widget.animate) {
+      return AnimatedSwitcher(
+        duration: widget.duration,
+        transitionBuilder: widget.transitionBuilder,
+        child: widget.builder(context, _state),
+      );
+    }
+    return widget.builder(context, _state);
+  }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
