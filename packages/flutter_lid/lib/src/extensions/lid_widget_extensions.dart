@@ -62,4 +62,24 @@ extension StateNotifierExtension<S> on StateNotifier<S> {
       duration: duration,
     );
   }
+
+  Widget toLidSelector<T>({
+    Key? key,
+    required LidWidgetBuilder<T> builder,
+    required LidWidgetSelector<S, T> selector,
+    bool animate = false,
+    AnimatedSwitcherTransitionBuilder transitionBuilder =
+        AnimatedSwitcher.defaultTransitionBuilder,
+    Duration duration = const Duration(milliseconds: 300),
+  }) {
+    return LidSelector<S, T>(
+      key: key,
+      stateNotifier: this,
+      selector: selector,
+      builder: builder,
+      animate: animate,
+      transitionBuilder: transitionBuilder,
+      duration: duration,
+    );
+  }
 }

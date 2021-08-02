@@ -277,6 +277,23 @@ LidConsumer<StateType>(
 )
 ```
 
+### LidSelector
+
+**LidSelector** is a Flutter widget which is analogous to `LidBuilder` but allows developers to filter updates by selecting a new value based on the current `stateNotifier`. Unnecessary builds are prevented if the selected value does not change. The selected value must be immutable in order for `LidSelector` to accurately determine whether `builder` should be called again.
+
+```dart
+LidSelector<StateType, SelectedState>(
+  selector: (state) {
+    // return selected state based on the provided state.
+  },
+  builder: (context, state) {
+    // return widget here based on the selected state.
+  },
+)
+```
+
+There is the possibility to animate between state changes as `LidBuilder`.
+
 ## Extensions 
 
 There are 3 extensions for -> LidBuilder, LidListener and LidConsumer.
@@ -304,6 +321,12 @@ stateNotifier.toLidConsumer(
   buildWhen: (previous, current) {},
   builder: (context, state) {}
 );
+
+// Same as LidSelector
+stateNotifier.toLidSelector<bool>(
+  selector: (state) {},
+  builder: (context, state) {},
+),
 ```
 
 ## Maintainers
