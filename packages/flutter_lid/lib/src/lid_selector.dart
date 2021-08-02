@@ -29,7 +29,7 @@ typedef LidWidgetSelector<S, T> = T Function(S state);
 /// ```
 /// {@endtemplate}
 class LidSelector<S, T> extends StatefulWidget {
-  /// {@macro bloc_selector}
+  /// {@macro lid_selector}
   const LidSelector({
     Key? key,
     required this.stateNotifier,
