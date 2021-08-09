@@ -1,3 +1,6 @@
+## [1.2.0]
+
+- Add `LidSelector`
 ## [1.1.1]
 
 - Add animation between state changes
