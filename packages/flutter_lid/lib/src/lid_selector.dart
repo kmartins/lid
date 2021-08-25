@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:state_notifier/state_notifier.dart';
 
 import 'lid_builder.dart';
-import 'lid_listener.dart';
 
 /// Signature for the `selector` function which
 /// is responsible for returning a selected value, [T], based on [state].
@@ -91,7 +90,9 @@ class LidSelector<S, T> extends StatefulWidget {
 
 class _LidSelectorState<S, T> extends State<LidSelector<S, T>> {
   late StateNotifier<S> _stateNotifier = widget.stateNotifier;
-  late T _state;
+  bool _hasFirstSelectedState = false;
+  late T _selectedState;
+  VoidCallback? _removeListener;
 
   @override
   void initState() {
@@ -104,44 +105,54 @@ class _LidSelectorState<S, T> extends State<LidSelector<S, T>> {
     super.didUpdateWidget(oldWidget);
     if (widget.stateNotifier != oldWidget.stateNotifier) {
       //Restart state
+      _hasFirstSelectedState = false;
       _stateNotifier = widget.stateNotifier;
       _listen();
     }
   }
 
-  void _listen() => _stateNotifier
-      .addListener(
-        (state) => _state = widget.selector(state),
-      )
-      .call();
+  void _listen() {
+    _removeListener?.call();
+    _removeListener = _stateNotifier.addListener(
+      (state) {
+        if (_hasFirstSelectedState) {
+          final selectedCurrentState = widget.selector(state);
+          if (_selectedState != selectedCurrentState) {
+            setState(() => _selectedState = selectedCurrentState);
+          }
+        } else {
+          _selectedState = widget.selector(state);
+          _hasFirstSelectedState = true;
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return LidListener<S>(
-      listener: (context, state) {
-        final selectedState = widget.selector(state);
-        if (_state != selectedState) {
-          setState(() => _state = selectedState);
-        }
-      },
-      stateNotifier: widget.stateNotifier,
-      child: widget.animate
-          ? AnimatedSwitcher(
-              duration: widget.duration,
-              transitionBuilder: widget.transitionBuilder,
-              child: widget.builder(context, _state),
-            )
-          : widget.builder(context, _state),
-    );
+    if (widget.animate) {
+      return AnimatedSwitcher(
+        duration: widget.duration,
+        transitionBuilder: widget.transitionBuilder,
+        child: widget.builder(context, _selectedState),
+      );
+    }
+    return widget.builder(context, _selectedState);
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty<T>('state', _state))
+      ..add(DiagnosticsProperty<T>('selectedState', _selectedState))
       ..add(
         DiagnosticsProperty<StateNotifier<S>>('stateNotifier', _stateNotifier),
       );
+  }
+
+  @override
+  void dispose() {
+    _removeListener?.call();
+    super.dispose();
   }
 }
