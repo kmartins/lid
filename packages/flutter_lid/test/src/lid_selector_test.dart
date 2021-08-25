@@ -36,15 +36,17 @@ void main() {
 
       final state = tester.state(find.byWidget(child));
 
-      expect(state.toString(),
-          endsWith("(state: true, stateNotifier: Instance of 'CounterState')"));
+      expect(
+          state.toString(),
+          endsWith(
+              "(selectedState: true, stateNotifier: Instance of 'CounterState')"));
 
       counterState.increment();
 
       expect(
           state.toString(),
           endsWith(
-              "(state: false, stateNotifier: Instance of 'CounterState')"));
+              "(selectedState: false, stateNotifier: Instance of 'CounterState')"));
     });
 
     testWidgets('renders with correct state', (tester) async {
