@@ -382,6 +382,27 @@ void main() {
       expect(conditionalCounterText4.data, '2');
     });
 
+    testWidgets('not call buildWhen in the first time', (tester) async {
+      final counterState = CounterState();
+      var calledBuildWhen = false;
+      await tester.pumpWidget(
+        LidBuilder<int>(
+          stateNotifier: counterState,
+          buildWhen: (_, __) {
+            calledBuildWhen = true;
+            return true;
+          },
+          builder: (_, value) {
+            return Text(
+              '$value',
+              textDirection: TextDirection.ltr,
+            );
+          },
+        ),
+      );
+      expect(calledBuildWhen, isFalse);
+    });
+
     group('with extension', () {
       testWidgets(
           'receives events and sends state updates to widget when '
