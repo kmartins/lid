@@ -149,12 +149,18 @@ class _LidBuilderState<T> extends State<LidBuilder<T>> {
   // First time = _lid == nul
   void _listener(T value) {
     _state = value;
-    final builderCondition =
-        widget.buildWhen?.call(_previousState ?? _state, value) ??
-            _defaultBuilderCondition(_previousState ?? _state, value);
-    if (builderCondition) {
+    bool? builderCondition;
+
+    final oldState = _previousState;
+    if (oldState != null) {
+      builderCondition = widget.buildWhen?.call(oldState, _state) ??
+          _defaultBuilderCondition(oldState, _state);
+    }
+
+    if (builderCondition ?? false) {
       setState(() {});
     }
+
     _previousState = _state;
   }
 
