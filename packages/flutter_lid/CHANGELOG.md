@@ -1,3 +1,9 @@
+## [1.2.1]
+
+- **build:** update lint package (#10)
+- **fix:** not call buildWhen in the first time (#9)
+- **refactor:** remove LidListener of the LidSelector (#8).
+
 ## [1.2.0]
 
 - Add `LidSelector`
